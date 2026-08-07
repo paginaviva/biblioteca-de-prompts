@@ -1,203 +1,205 @@
-# Biblioteca de Prompts
+**Español**: la versión en español de este documento está disponible en [README-ES.md](README-ES.md).
 
-Aplicación web de código abierto para gestionar, organizar y buscar instrucciones (prompts) para inteligencia artificial. Desarrollada con Next.js, Prisma y PostgreSQL.
+# Prompt Library
 
-> 🪧 **Página web del proyecto**: [bprompts.paginaviva.net](https://bprompts.paginaviva.net)
+Open-source web application to manage, organize, and search instructions (prompts) for artificial intelligence. Built with Next.js, Prisma, and PostgreSQL.
 
----
-
-## Índice
-
-1. [Descripción](#descripción)
-2. [Características](#características)
-3. [Capturas de pantalla](#capturas-de-pantalla)
-4. [Tecnologías](#tecnologías)
-5. [Requisitos](#requisitos)
-6. [Instalación](#instalación)
-7. [Configuración del entorno](#configuración-del-entorno)
-8. [Base de datos](#base-de-datos)
-9. [Desarrollo](#desarrollo)
-10. [Pruebas](#pruebas)
-11. [Compilación para producción](#compilación-para-producción)
-12. [Despliegue](#despliegue)
-13. [Documentación](#documentación)
-14. [Créditos y origen](#créditos-y-origen)
-15. [Licencia](#licencia)
+> 🪧 **Project website**: [bprompts.paginaviva.net](https://bprompts.paginaviva.net)
 
 ---
 
-## Descripción
+## Table of Contents
 
-Biblioteca de instrucciones (prompts) para inteligencia artificial: gestión, organización y búsqueda de órdenes para diferentes modelos de IA, basada en Prompt Database. Este repositorio es un tenedor (fork) de [YellowBerry007/prompt-database](https://github.com/YellowBerry007/prompt-database), con crédito a su creador.
+1. [Description](#description)
+2. [Features](#features)
+3. [Screenshots](#screenshots)
+4. [Technologies](#technologies)
+5. [Requirements](#requirements)
+6. [Installation](#installation)
+7. [Environment configuration](#environment-configuration)
+8. [Database](#database)
+9. [Development](#development)
+10. [Testing](#testing)
+11. [Production build](#production-build)
+12. [Deployment](#deployment)
+13. [Documentation](#documentation)
+14. [Credits and origin](#credits-and-origin)
+15. [License](#license)
 
-La aplicación permite crear, editar y eliminar instrucciones, organizarlas con categorías jerárquicas y etiquetas, filtrarlas y buscarlas por texto completo, copiarlas al portapapeles con un clic, y exportarlas o importarlas en formato JSON.
+---
 
-## Características
+## Description
 
-- Crear, editar y eliminar instrucciones (prompts)
-- Organizar con categorías jerárquicas (hasta dos niveles) y etiquetas
-- Filtrar por categoría, etiqueta, plataforma, estado, idioma, clientes, proyectos, casos de uso, sugerencias de modelo y favoritos
-- Búsqueda de texto completo en título, descripción y cuerpo
-- Seguimiento de uso (contador de usos y fecha del último uso)
-- Copiado al portapapeles con un clic
-- Duplicar instrucciones
-- Marcar como favoritas
-- Exportar e importar en formato JSON
-- Autenticación de usuarios con NextAuth
-- Aislamiento de instrucciones por usuario
-- Perfil de usuario con pestañas (cuenta, escritorio, usuarios)
-- Gestión de usuarios para el rol administrador
-- Instrucciones compartidas entre usuarios (vista de solo lectura)
-- Interfaz multilingüe con selector de idioma (español e inglés)
-- Interfaz moderna con TailwindCSS y shadcn/ui
+Prompt library for artificial intelligence: management, organization, and search of prompts for different AI models, based on Prompt Database. This repository is a fork of [YellowBerry007/prompt-database](https://github.com/YellowBerry007/prompt-database), with credit to its creator.
 
-## Capturas de pantalla
+The application lets you create, edit, and delete prompts, organize them with hierarchical categories and tags, filter and search them by full text, copy them to the clipboard with a click, and export or import them in JSON format.
 
-Las capturas de pantalla de la aplicación se publicarán próximamente. La lista de capturas previstas y su ubicación está documentada en [screenshots/lista-de-capturas.md](screenshots/lista-de-capturas.md).
+## Features
 
-| Captura | Descripción |
+- Create, edit, and delete prompts
+- Organize with hierarchical categories (up to two levels) and tags
+- Filter by category, tag, platform, status, language, clients, projects, use cases, model suggestions, and favorites
+- Full-text search in title, description, and body
+- Usage tracking (usage counter and last used date)
+- One-click copy to clipboard
+- Duplicate prompts
+- Mark as favorite
+- Export and import in JSON format
+- User authentication with NextAuth
+- Per-user prompt isolation
+- User profile with tabs (account, dashboard, users)
+- User management for the admin role
+- Prompts shared between users (read-only view)
+- Multilingual interface with language selector (Spanish and English)
+- Modern interface with TailwindCSS and shadcn/ui
+
+## Screenshots
+
+Application screenshots will be published soon. The list of planned screenshots and their location is documented in [screenshots/lista-de-capturas.md](screenshots/lista-de-capturas.md).
+
+| Screenshot | Description |
 |---|---|
-| `screenshots/pantalla-principal.png` | Listado de mensajes con búsqueda y filtros |
-| `screenshots/pantalla-formulario.png` | Formulario de creación y edición |
-| `screenshots/pantalla-detalle.png` | Detalle con botón de copiado |
-| `screenshots/pantalla-categorias.png` | Gestión de categorías jerárquicas |
-| `screenshots/pantalla-etiquetas.png` | Gestión de etiquetas |
-| `screenshots/pantalla-perfil.png` | Perfil de usuario con pestañas |
-| `screenshots/pantalla-administracion.png` | Gestión de usuarios (administrador) |
-| `screenshots/pantalla-idiomas.png` | Selector de idioma |
+| `screenshots/pantalla-principal.png` | Message listing with search and filters |
+| `screenshots/pantalla-formulario.png` | Creation and editing form |
+| `screenshots/pantalla-detalle.png` | Detail view with copy button |
+| `screenshots/pantalla-categorias.png` | Hierarchical category management |
+| `screenshots/pantalla-etiquetas.png` | Tag management |
+| `screenshots/pantalla-perfil.png` | User profile with tabs |
+| `screenshots/pantalla-administracion.png` | User management (admin) |
+| `screenshots/pantalla-idiomas.png` | Language selector |
 
-## Tecnologías
+## Technologies
 
-- **Marco de trabajo**: Next.js 14 (App Router)
-- **Lenguaje**: TypeScript
-- **Estilos**: TailwindCSS
-- **Componentes de interfaz**: shadcn/ui
-- **Base de datos**: PostgreSQL
-- **Mapeo objeto-relacional**: Prisma
-- **Autenticación**: NextAuth
-- **Validación**: Zod
-- **Pruebas**: Jest
-- **Traducciones**: next-intl
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: TailwindCSS
+- **UI components**: shadcn/ui
+- **Database**: PostgreSQL
+- **Object-relational mapping**: Prisma
+- **Authentication**: NextAuth
+- **Validation**: Zod
+- **Testing**: Jest
+- **Translations**: next-intl
 
-## Requisitos
+## Requirements
 
-- Node.js versión 20 o superior
-- npm, yarn o pnpm como gestor de paquetes
-- Base de datos PostgreSQL (por ejemplo, Neon)
-- Cuenta de Vercel para el despliegue
+- Node.js version 20 or higher
+- npm, yarn, or pnpm as package manager
+- PostgreSQL database (e.g., Neon)
+- Vercel account for deployment
 
-## Instalación
+## Installation
 
-1. Clonar el repositorio:
+1. Clone the repository:
 
 ```bash
 git clone https://github.com/paginaviva/biblioteca-de-prompts.git
 cd biblioteca-de-prompts
 ```
 
-2. Instalar las dependencias:
+2. Install the dependencies:
 
 ```bash
 npm install
-# o
+# or
 yarn install
-# o
+# or
 pnpm install
 ```
 
-3. Configurar las variables de entorno (ver [Configuración del entorno](#configuración-del-entorno)).
+3. Configure the environment variables (see [Environment configuration](#environment-configuration)).
 
-## Configuración del entorno
+## Environment configuration
 
-Copiar el archivo de ejemplo y completar los valores:
+Copy the example file and fill in the values:
 
 ```bash
 cp .env.example .env
 ```
 
-Las variables principales son:
+The main variables are:
 
-| Variable | Descripción |
+| Variable | Description |
 |---|---|
-| `DATABASE_URL` | Cadena de conexión a la base de datos PostgreSQL |
-| `DATABASE_URL_UNPOOLED` | Cadena de conexión sin agrupación de conexiones (para migraciones) |
-| `AUTH_SECRET` | Secreto de sesión de NextAuth |
-| `AUTH_URL` | Dirección pública de la aplicación |
-| `SEED_ADMIN_PASSWORD` | Contraseña del usuario administrador de la semilla |
-| `SEED_USER_PASSWORD` | Contraseña del usuario de ejemplo de la semilla |
-| `NEXT_PUBLIC_BASE_PATH` | Ruta base para despliegues en subcarpeta (vacía por defecto) |
+| `DATABASE_URL` | PostgreSQL database connection string |
+| `DATABASE_URL_UNPOOLED` | Connection string without connection pooling (for migrations) |
+| `AUTH_SECRET` | NextAuth session secret |
+| `AUTH_URL` | Public URL of the application |
+| `SEED_ADMIN_PASSWORD` | Seed admin user password |
+| `SEED_USER_PASSWORD` | Seed sample user password |
+| `NEXT_PUBLIC_BASE_PATH` | Base path for subfolder deployments (empty by default) |
 
-> ⚠️ **Importante**: el archivo `.env` contiene credenciales reales y no debe publicarse nunca. Solo se versiona el archivo `.env.example`.
+> ⚠️ **Important**: the `.env` file contains real credentials and must never be published. Only the `.env.example` file is versioned.
 
-## Base de datos
+## Database
 
 ```bash
-# Generar el cliente de Prisma
+# Generate the Prisma client
 npm run db:generate
 
-# Aplicar las migraciones
+# Apply the migrations
 npm run db:migrate
 
-# (Opcional) Sembrar la base de datos con datos de ejemplo
+# (Optional) Seed the database with sample data
 npm run db:seed
 ```
 
-## Desarrollo
+## Development
 
-Iniciar el servidor de desarrollo:
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
-Abrir [http://localhost:3000](http://localhost:3000) en el navegador.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Pruebas
+## Testing
 
 ```bash
 npm test
 ```
 
-Pruebas en modo de vigilancia:
+Tests in watch mode:
 
 ```bash
 npm run test:watch
 ```
 
-## Compilación para producción
+## Production build
 
 ```bash
 npm run build
 npm start
 ```
 
-## Despliegue
+## Deployment
 
-La aplicación se despliega en producción en Vercel con una base de datos PostgreSQL gestionada en Neon.
+The application is deployed to production on Vercel with a PostgreSQL database managed on Neon.
 
-1. Configurar las variables de entorno en el panel de Vercel (Proyecto → Configuración → Variables de entorno)
-2. Conectar el repositorio `paginaviva/biblioteca-de-prompts`
-3. Desplegar desde la rama principal
+1. Configure the environment variables in the Vercel dashboard (Project → Settings → Environment variables)
+2. Connect the `paginaviva/biblioteca-de-prompts` repository
+3. Deploy from the main branch
 
-El detalle completo del procedimiento está en el [manual del desarrollador e instalador](manuales/manual-del-desarrollador.md).
+The full procedure is detailed in the [developer and installer manual](manuales/manual-del-desarrollador.md).
 
-## Documentación
+## Documentation
 
-| Documento | Descripción | Idiomas |
+| Document | Description | Languages |
 |---|---|---|
-| [Manual de usuario](manuales/manual-de-usuario.md) | Guía de uso completa de la aplicación | Español |
-| [Manual de usuario (inglés)](manuales/manual-de-usuario-en.md) | Guía de uso completa de la aplicación | Inglés |
-| [Manual del desarrollador e instalador](manuales/manual-del-desarrollador.md) | Guía técnica de instalación, configuración y despliegue | Español |
-| [Manual del desarrollador e instalador (inglés)](manuales/manual-del-desarrollador-en.md) | Guía técnica de instalación, configuración y despliegue | Inglés |
+| [User manual](manuales/manual-de-usuario.md) | Complete usage guide for the application | Spanish |
+| [User manual (English)](manuales/manual-de-usuario-en.md) | Complete usage guide for the application | English |
+| [Developer and installer manual](manuales/manual-del-desarrollador.md) | Technical guide for installation, configuration and deployment | Spanish |
+| [Developer and installer manual (English)](manuales/manual-del-desarrollador-en.md) | Technical guide for installation, configuration and deployment | English |
 
-## Créditos y origen
+## Credits and origin
 
-Este proyecto es un tenedor (fork) de [YellowBerry007/prompt-database](https://github.com/YellowBerry007/prompt-database), creado por **Berry @ Yellowgrape**. El desarrollo posterior ha sido realizado por la organización [PáginaVIVA](https://github.com/paginaviva).
+This project is a fork of [YellowBerry007/prompt-database](https://github.com/YellowBerry007/prompt-database), created by **Berry @ Yellowgrape**. Subsequent development has been carried out by the [PáginaVIVA](https://github.com/paginaviva) organization.
 
-- Repositorio original: [github.com/YellowBerry007/prompt-database](https://github.com/YellowBerry007/prompt-database)
-- Tenedor: [github.com/paginaviva/biblioteca-de-prompts](https://github.com/paginaviva/biblioteca-de-prompts)
-- Página web: [bprompts.paginaviva.net](https://bprompts.paginaviva.net)
+- Original repository: [github.com/YellowBerry007/prompt-database](https://github.com/YellowBerry007/prompt-database)
+- Fork: [github.com/paginaviva/biblioteca-de-prompts](https://github.com/paginaviva/biblioteca-de-prompts)
+- Website: [bprompts.paginaviva.net](https://bprompts.paginaviva.net)
 
-## Licencia
+## License
 
-Este proyecto se publica bajo la licencia MIT. El código original de `YellowBerry007/prompt-database` conserva los derechos de su autor.
+This project is released under the MIT license. The original code of `YellowBerry007/prompt-database` retains its author's rights.
