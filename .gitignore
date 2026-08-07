@@ -34,6 +34,8 @@ next-env.d.ts
 .env.*
 # Variantes locales (sufijo .local)
 .env*.local
+# Excepción: la plantilla de variables de entorno sí se versiona
+!.env.example
 
 # Vercel (configuración local de proyecto vinculado)
 .vercel
@@ -75,3 +77,4 @@ session-*
 # ── DIRECTORIOS TEMPORALES ──────────────────────────────────────────────────
 temp/
 .env*
+!.env.example
