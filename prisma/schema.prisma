@@ -1,59 +1,136 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x"]
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// SQLite doesn't support enums, so we use String with @default
-model Prompt {
-  id            String       @id @default(cuid())
-  title         String
-  description   String?
-  body          String
-  type          String       @default("USER") // SYSTEM, USER, TOOL
-  platform      String       @default("CURSOR") // CHATGPT, CURSOR, MIDJOURNEY, SUNO, OTHER
-  modelHint     String?
-  language      String       @default("en")
-  useCase       String
-  clientOrProject String?
-  status        String       @default("DRAFT") // DRAFT, TESTED, PRODUCTION
-  isFavorite    Boolean      @default(false)
-  version       Int          @default(1)
-  changelog     String?
-  notes         String?
-  usageCount    Int          @default(0)
-  lastUsedAt    DateTime?
-  categoryId    String?
-  category      Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  tags          PromptTag[]
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+model User {
+  id                       String    @id @default(cuid())
+  name                     String?
+  email                    String    @unique
+  emailVerified            DateTime?
+  image                    String?
+  password                 String?
+  role                     String    @default("user")
+  isActive                 Boolean   @default(true)
+  language                 String?
+  promptListViewPreference String    @default("cards")
+  uiPreferences            Json      @default("{}")
+  failedLoginAttempts      Int       @default(0)
+  lockoutUntil             DateTime?
+  tokenVersion             Int       @default(0)
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+  accounts                 Account[]
+  prompts                  Prompt[]
+  sessions                 Session[]
+}
 
-  @@index([categoryId])
+// Per-IP failed attempt tracking (brute-force mitigation complementing the
+// per-account lockout on User). Keyed by normalized IP only — deliberately
+// decoupled from any account so a locked IP cannot be used to deliberately
+// lock out other users' accounts.
+model IpAttempt {
+  id             String    @id @default(cuid())
+  ip             String
+  failedAttempts Int       @default(0)
+  lockoutUntil   DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([ip])
+  @@index([lockoutUntil])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Prompt {
+  id              String                @id @default(cuid())
+  title           String
+  description     String?
+  body            String
+  type            String                @default("USER")
+  platform        String?               @default("CURSOR")
+  modelHint       String?
+  language        String                @default("es")
+  useCase         String?
+  clientOrProject String?
+  status          String                @default("DRAFT")
+  isFavorite      Boolean               @default(false)
+  isShared        Boolean               @default(false)
+  version         Int                   @default(1)
+  changelog       String?
+  notes           String?
+  prePrompt       String?               @db.Text
+  manualDeUso     String?               @db.Text
+  usageCount      Int                   @default(0)
+  lastUsedAt      DateTime?
+  userId          String?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  user            User?                 @relation(fields: [userId], references: [id])
+  categories      PromptCategory[]
+  clientProjects  PromptClientProject[]
+  modelHints      PromptModelHint[]
+  platforms       PromptPlatform[]
+  tags            PromptTag[]
+  useCases        PromptUseCase[]
+
   @@index([status])
   @@index([platform])
   @@index([isFavorite])
+  @@index([isShared])
   @@index([language])
+  @@index([userId])
 }
 
 model Category {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  slug        String    @unique
-  parentId    String?
-  parent      Category? @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Cascade)
-  children    Category[] @relation("CategoryTree")
-  sortOrder   Int       @default(0)
-  prompts     Prompt[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String           @id @default(cuid())
+  name      String           @unique
+  slug      String           @unique
+  parentId  String?
+  sortOrder Int              @default(0)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  parent    Category?        @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Category[]       @relation("CategoryTree")
+  prompts   PromptCategory[]
 
   @@index([parentId])
   @@index([slug])
@@ -63,21 +140,160 @@ model Tag {
   id        String      @id @default(cuid())
   name      String      @unique
   slug      String      @unique
-  prompts   PromptTag[]
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
+  prompts   PromptTag[]
 
   @@index([slug])
 }
 
 model PromptTag {
-  promptId  String
-  prompt    Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
-  tagId     String
-  tag       Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  promptId String
+  tagId    String
+  prompt   Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([promptId, tagId])
   @@index([promptId])
   @@index([tagId])
 }
 
+model Platform {
+  id        String           @id @default(cuid())
+  name      String           @unique
+  slug      String           @unique
+  sortOrder Int              @default(0)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  prompts   PromptPlatform[]
+
+  @@index([slug])
+}
+
+model ClientProject {
+  id        String                @id @default(cuid())
+  name      String                @unique
+  slug      String                @unique
+  sortOrder Int                   @default(0)
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+  prompts   PromptClientProject[]
+
+  @@index([slug])
+}
+
+model UseCase {
+  id        String          @id @default(cuid())
+  name      String          @unique
+  slug      String          @unique
+  sortOrder Int             @default(0)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  prompts   PromptUseCase[]
+
+  @@index([slug])
+}
+
+model ModelHint {
+  id        String            @id @default(cuid())
+  name      String            @unique
+  slug      String            @unique
+  sortOrder Int               @default(0)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  prompts   PromptModelHint[]
+
+  @@index([slug])
+}
+
+model PromptPlatform {
+  promptId   String
+  platformId String
+  platform   Platform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  prompt     Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+
+  @@id([promptId, platformId])
+  @@index([promptId])
+  @@index([platformId])
+}
+
+model PromptClientProject {
+  promptId        String
+  clientProjectId String
+  clientProject   ClientProject @relation(fields: [clientProjectId], references: [id], onDelete: Cascade)
+  prompt          Prompt        @relation(fields: [promptId], references: [id], onDelete: Cascade)
+
+  @@id([promptId, clientProjectId])
+  @@index([promptId])
+  @@index([clientProjectId])
+}
+
+model PromptUseCase {
+  promptId  String
+  useCaseId String
+  prompt    Prompt  @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  useCase   UseCase @relation(fields: [useCaseId], references: [id], onDelete: Cascade)
+
+  @@id([promptId, useCaseId])
+  @@index([promptId])
+  @@index([useCaseId])
+}
+
+model PromptModelHint {
+  promptId    String
+  modelHintId String
+  modelHint   ModelHint @relation(fields: [modelHintId], references: [id], onDelete: Cascade)
+  prompt      Prompt    @relation(fields: [promptId], references: [id], onDelete: Cascade)
+
+  @@id([promptId, modelHintId])
+  @@index([promptId])
+  @@index([modelHintId])
+}
+
+model PromptCategory {
+  promptId   String
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  prompt     Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+
+  @@id([promptId, categoryId])
+  @@index([promptId])
+  @@index([categoryId])
+}
+
+// Catalog entities for the taxonomy management pages (admin CRUD).
+// Prompts keep their type/status/language as plain strings; these catalogs
+// define the allowed values used by the form and filters. Deleting a catalog
+// value never touches existing prompts (simple unlinking).
+model Type {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+}
+
+model Status {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+}
+
+model Language {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+}

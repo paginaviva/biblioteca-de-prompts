@@ -1,262 +1,203 @@
-# Prompt Database
+# Biblioteca de Prompts
 
-A full-stack web application for managing and organizing AI prompts. Built with Next.js, Prisma, and SQLite.
+Aplicación web de código abierto para gestionar, organizar y buscar instrucciones (prompts) para inteligencia artificial. Desarrollada con Next.js, Prisma y PostgreSQL.
 
-## Features
+> 🪧 **Página web del proyecto**: [bprompts.paginaviva.net](https://bprompts.paginaviva.net)
 
-- ✅ Create, edit, and delete prompts
-- ✅ Organize prompts with categories and tags
-- ✅ Filter prompts by category, tags, platform, status, and more
-- ✅ Full-text search across title, description, and body
-- ✅ Usage tracking (usage count and last used date)
-- ✅ Copy prompts to clipboard with one click
-- ✅ Duplicate prompts
-- ✅ Mark prompts as favorites
-- ✅ Export/import prompts in JSON format
-- ✅ Hierarchical category structure
-- ✅ Modern UI with TailwindCSS and shadcn/ui
+---
 
-## Tech Stack
+## Índice
 
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: TailwindCSS
-- **UI Components**: shadcn/ui
-- **Database**: SQLite
-- **ORM**: Prisma
-- **Validation**: Zod
+1. [Descripción](#descripción)
+2. [Características](#características)
+3. [Capturas de pantalla](#capturas-de-pantalla)
+4. [Tecnologías](#tecnologías)
+5. [Requisitos](#requisitos)
+6. [Instalación](#instalación)
+7. [Configuración del entorno](#configuración-del-entorno)
+8. [Base de datos](#base-de-datos)
+9. [Desarrollo](#desarrollo)
+10. [Pruebas](#pruebas)
+11. [Compilación para producción](#compilación-para-producción)
+12. [Despliegue](#despliegue)
+13. [Documentación](#documentación)
+14. [Créditos y origen](#créditos-y-origen)
+15. [Licencia](#licencia)
 
-## Prerequisites
+---
 
-- Node.js 20 or higher
-- npm, yarn, or pnpm
+## Descripción
 
-## Installation
+Biblioteca de instrucciones (prompts) para inteligencia artificial: gestión, organización y búsqueda de órdenes para diferentes modelos de IA, basada en Prompt Database. Este repositorio es un tenedor (fork) de [YellowBerry007/prompt-database](https://github.com/YellowBerry007/prompt-database), con crédito a su creador.
 
-1. Clone the repository:
+La aplicación permite crear, editar y eliminar instrucciones, organizarlas con categorías jerárquicas y etiquetas, filtrarlas y buscarlas por texto completo, copiarlas al portapapeles con un clic, y exportarlas o importarlas en formato JSON.
+
+## Características
+
+- Crear, editar y eliminar instrucciones (prompts)
+- Organizar con categorías jerárquicas (hasta dos niveles) y etiquetas
+- Filtrar por categoría, etiqueta, plataforma, estado, idioma, clientes, proyectos, casos de uso, sugerencias de modelo y favoritos
+- Búsqueda de texto completo en título, descripción y cuerpo
+- Seguimiento de uso (contador de usos y fecha del último uso)
+- Copiado al portapapeles con un clic
+- Duplicar instrucciones
+- Marcar como favoritas
+- Exportar e importar en formato JSON
+- Autenticación de usuarios con NextAuth
+- Aislamiento de instrucciones por usuario
+- Perfil de usuario con pestañas (cuenta, escritorio, usuarios)
+- Gestión de usuarios para el rol administrador
+- Instrucciones compartidas entre usuarios (vista de solo lectura)
+- Interfaz multilingüe con selector de idioma (español e inglés)
+- Interfaz moderna con TailwindCSS y shadcn/ui
+
+## Capturas de pantalla
+
+Las capturas de pantalla de la aplicación se publicarán próximamente. La lista de capturas previstas y su ubicación está documentada en [screenshots/lista-de-capturas.md](screenshots/lista-de-capturas.md).
+
+| Captura | Descripción |
+|---|---|
+| `screenshots/pantalla-principal.png` | Listado de mensajes con búsqueda y filtros |
+| `screenshots/pantalla-formulario.png` | Formulario de creación y edición |
+| `screenshots/pantalla-detalle.png` | Detalle con botón de copiado |
+| `screenshots/pantalla-categorias.png` | Gestión de categorías jerárquicas |
+| `screenshots/pantalla-etiquetas.png` | Gestión de etiquetas |
+| `screenshots/pantalla-perfil.png` | Perfil de usuario con pestañas |
+| `screenshots/pantalla-administracion.png` | Gestión de usuarios (administrador) |
+| `screenshots/pantalla-idiomas.png` | Selector de idioma |
+
+## Tecnologías
+
+- **Marco de trabajo**: Next.js 14 (App Router)
+- **Lenguaje**: TypeScript
+- **Estilos**: TailwindCSS
+- **Componentes de interfaz**: shadcn/ui
+- **Base de datos**: PostgreSQL
+- **Mapeo objeto-relacional**: Prisma
+- **Autenticación**: NextAuth
+- **Validación**: Zod
+- **Pruebas**: Jest
+- **Traducciones**: next-intl
+
+## Requisitos
+
+- Node.js versión 20 o superior
+- npm, yarn o pnpm como gestor de paquetes
+- Base de datos PostgreSQL (por ejemplo, Neon)
+- Cuenta de Vercel para el despliegue
+
+## Instalación
+
+1. Clonar el repositorio:
+
 ```bash
-git clone <repository-url>
-cd "Prompt database"
+git clone https://github.com/paginaviva/biblioteca-de-prompts.git
+cd biblioteca-de-prompts
 ```
 
-2. Install dependencies:
+2. Instalar las dependencias:
+
 ```bash
 npm install
-# or
+# o
 yarn install
-# or
+# o
 pnpm install
 ```
 
-3. Set up environment variables:
+3. Configurar las variables de entorno (ver [Configuración del entorno](#configuración-del-entorno)).
+
+## Configuración del entorno
+
+Copiar el archivo de ejemplo y completar los valores:
+
 ```bash
 cp .env.example .env
 ```
 
-The default `.env` file should contain:
-```
-DATABASE_URL="file:./dev.db"
-```
+Las variables principales son:
 
-4. Set up the database:
+| Variable | Descripción |
+|---|---|
+| `DATABASE_URL` | Cadena de conexión a la base de datos PostgreSQL |
+| `DATABASE_URL_UNPOOLED` | Cadena de conexión sin agrupación de conexiones (para migraciones) |
+| `AUTH_SECRET` | Secreto de sesión de NextAuth |
+| `AUTH_URL` | Dirección pública de la aplicación |
+| `SEED_ADMIN_PASSWORD` | Contraseña del usuario administrador de la semilla |
+| `SEED_USER_PASSWORD` | Contraseña del usuario de ejemplo de la semilla |
+| `NEXT_PUBLIC_BASE_PATH` | Ruta base para despliegues en subcarpeta (vacía por defecto) |
+
+> ⚠️ **Importante**: el archivo `.env` contiene credenciales reales y no debe publicarse nunca. Solo se versiona el archivo `.env.example`.
+
+## Base de datos
+
 ```bash
-# Generate Prisma Client
+# Generar el cliente de Prisma
 npm run db:generate
 
-# Run migrations
+# Aplicar las migraciones
 npm run db:migrate
 
-# (Optional) Seed the database with sample data
+# (Opcional) Sembrar la base de datos con datos de ejemplo
 npm run db:seed
 ```
 
-## Development
+## Desarrollo
 
-Start the development server:
+Iniciar el servidor de desarrollo:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Abrir [http://localhost:3000](http://localhost:3000) en el navegador.
 
-## Database Management
+## Pruebas
 
-### Run migrations
-```bash
-npm run db:migrate
-```
-
-### Push schema changes (for development)
-```bash
-npm run db:push
-```
-
-### Seed the database
-```bash
-npm run db:seed
-```
-
-## Testing
-
-Run tests:
 ```bash
 npm test
 ```
 
-Run tests in watch mode:
+Pruebas en modo de vigilancia:
+
 ```bash
 npm run test:watch
 ```
 
-## Building for Production
+## Compilación para producción
 
-Build the application:
 ```bash
 npm run build
-```
-
-Start the production server:
-```bash
 npm start
 ```
 
-## Docker
+## Despliegue
 
-### Quick Start
+La aplicación se despliega en producción en Vercel con una base de datos PostgreSQL gestionada en Neon.
 
-De snelste manier om de applicatie te draaien met Docker:
+1. Configurar las variables de entorno en el panel de Vercel (Proyecto → Configuración → Variables de entorno)
+2. Conectar el repositorio `paginaviva/biblioteca-de-prompts`
+3. Desplegar desde la rama principal
 
-```bash
-# Build en start de container
-docker-compose up -d --build
+El detalle completo del procedimiento está en el [manual del desarrollador e instalador](manuales/manual-del-desarrollador.md).
 
-# Initialiseer de database
-docker-compose exec app npx prisma migrate deploy
+## Documentación
 
-# (Optioneel) Seed de database
-docker-compose exec app npm run db:seed
-```
+| Documento | Descripción | Idiomas |
+|---|---|---|
+| [Manual de usuario](manuales/manual-de-usuario.md) | Guía de uso completa de la aplicación | Español |
+| [Manual de usuario (inglés)](manuales/manual-de-usuario-en.md) | Guía de uso completa de la aplicación | Inglés |
+| [Manual del desarrollador e instalador](manuales/manual-del-desarrollador.md) | Guía técnica de instalación, configuración y despliegue | Español |
+| [Manual del desarrollador e instalador (inglés)](manuales/manual-del-desarrollador-en.md) | Guía técnica de instalación, configuración y despliegue | Inglés |
 
-De applicatie is nu beschikbaar op http://localhost:3300
+## Créditos y origen
 
-### Development Mode
+Este proyecto es un tenedor (fork) de [YellowBerry007/prompt-database](https://github.com/YellowBerry007/prompt-database), creado por **Berry @ Yellowgrape**. El desarrollo posterior ha sido realizado por la organización [PáginaVIVA](https://github.com/paginaviva).
 
-Voor development met hot-reload:
+- Repositorio original: [github.com/YellowBerry007/prompt-database](https://github.com/YellowBerry007/prompt-database)
+- Tenedor: [github.com/paginaviva/biblioteca-de-prompts](https://github.com/paginaviva/biblioteca-de-prompts)
+- Página web: [bprompts.paginaviva.net](https://bprompts.paginaviva.net)
 
-```bash
-docker-compose -f docker-compose.dev.yml up --build
-```
+## Licencia
 
-### Handige Commands
-
-```bash
-# Logs bekijken
-docker-compose logs -f app
-
-# Container stoppen
-docker-compose down
-
-# Container opnieuw opbouwen
-docker-compose up -d --build --force-recreate
-```
-
-Voor meer gedetailleerde Docker instructies, zie [DOCKER.md](./DOCKER.md)
-
-## Project Structure
-
-```
-├── app/                    # Next.js app directory
-│   ├── api/               # API routes
-│   ├── prompts/          # Prompt pages
-│   ├── categories/       # Category pages
-│   └── tags/             # Tag pages
-├── components/            # React components
-│   ├── ui/               # shadcn/ui components
-│   ├── layout/           # Layout components
-│   └── prompt/           # Prompt-related components
-├── lib/                   # Utility functions
-├── prisma/                # Prisma schema and migrations
-├── tests/                 # Test files
-└── public/                # Static assets
-```
-
-## API Endpoints
-
-### Prompts
-- `GET /api/prompts` - List prompts (with filters)
-- `POST /api/prompts` - Create a prompt
-- `GET /api/prompts/[id]` - Get a prompt
-- `PUT /api/prompts/[id]` - Update a prompt
-- `DELETE /api/prompts/[id]` - Delete a prompt
-- `PATCH /api/prompts/[id]/usage` - Track prompt usage
-
-### Categories
-- `GET /api/categories` - List categories
-- `POST /api/categories` - Create a category
-- `PUT /api/categories/[id]` - Update a category
-- `DELETE /api/categories/[id]` - Delete a category
-
-### Tags
-- `GET /api/tags` - List tags
-- `POST /api/tags` - Create a tag
-- `PUT /api/tags/[id]` - Update a tag
-- `DELETE /api/tags/[id]` - Delete a tag
-
-### Export/Import
-- `GET /api/export/prompts` - Export all prompts as JSON
-- `POST /api/import/prompts` - Import prompts from JSON
-
-## Usage
-
-### Creating a Prompt
-
-1. Click "New Prompt" in the top bar
-2. Fill in the required fields (title, body, use case)
-3. Optionally add description, category, tags, and other metadata
-4. Click "Save"
-
-### Filtering Prompts
-
-Use the sidebar filters to:
-- Filter by category
-- Filter by tags (multiple selection)
-- Filter by platform
-- Filter by status
-- Filter by language
-- Show only favorites
-
-### Searching
-
-Use the search bar in the top bar to search across:
-- Prompt titles
-- Descriptions
-- Prompt body content
-
-### Export/Import
-
-**Export:**
-1. Click "Export" in the top bar
-2. A JSON file will be downloaded with all prompts, categories, and tags
-
-**Import:**
-1. Click "Import" in the top bar
-2. Select a JSON file exported from this application
-3. Click "Import"
-4. The prompts will be imported (categories and tags will be created if they don't exist)
-
-### Copying a Prompt
-
-1. Open a prompt
-2. Click "Copy Prompt" button
-3. The prompt body will be copied to your clipboard
-4. Usage count and last used date will be automatically updated
-
-## License
-
-MIT
-
+Este proyecto se publica bajo la licencia MIT. El código original de `YellowBerry007/prompt-database` conserva los derechos de su autor.

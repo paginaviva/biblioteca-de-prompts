@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "title": "Prompt Library — Manage and organise AI prompts",
+    "description": "Web application to manage, organise and search AI prompts. Open source on GitHub."
+  },
+  "nav": {
+    "features": "Features",
+    "screenshots": "Screenshots",
+    "requirements": "Requirements",
+    "docs": "Documentation",
+    "github": "GitHub",
+    "source": "Source code"
+  },
+  "hero": {
+    "badge": "Open source",
+    "title": "Prompt Library",
+    "subtitle": "Manage, organise and search your AI prompts",
+    "description": "Open source web application to create, edit and organise prompts for different AI models, with categories, tags, full-text search and one-click copy.",
+    "ctaGithub": "View on GitHub",
+    "ctaDocs": "User manual",
+    "forkNote": "Fork of YellowBerry007/prompt-database, with credit to its creator Berry @ Yellowgrape."
+  },
+  "features": {
+    "title": "Features",
+    "subtitle": "Everything you need to keep your prompt library under control",
+    "items": [
+      { "title": "Create and edit", "text": "Create, edit and delete prompts with a complete form." },
+      { "title": "Hierarchical categories", "text": "Organise with two-level categories and tags." },
+      { "title": "Full-text search", "text": "Search across title, description and body of each prompt." },
+      { "title": "Combined filters", "text": "Filter by category, tag, platform, status and favourites." },
+      { "title": "One-click copy", "text": "Copy any prompt to the clipboard with a single click." },
+      { "title": "Usage tracking", "text": "Usage counter and last-used date for each prompt." },
+      { "title": "Favourites and duplicate", "text": "Mark as favourite and duplicate prompts easily." },
+      { "title": "Export and import", "text": "Export and import your library in JSON format." },
+      { "title": "Multi-user", "text": "User authentication and per-user prompt isolation." },
+      { "title": "Multilingual", "text": "Interface in Spanish and English, with language selector." }
+    ]
+  },
+  "screenshots": {
+    "title": "Screenshots",
+    "subtitle": "Coming soon: application screens",
+    "pending": "Application screenshots will be published soon."
+  },
+  "requirements": {
+    "title": "Requirements",
+    "subtitle": "To install and run the application",
+    "items": [
+      "Node.js version 20 or higher",
+      "npm, yarn or pnpm as package manager",
+      "PostgreSQL database (for example, Neon)",
+      "Vercel account for deployment"
+    ]
+  },
+  "docs": {
+    "title": "Documentation",
+    "subtitle": "Manuals available in the repository",
+    "userManual": "User manual",
+    "devManual": "Developer and installer manual",
+    "userManualText": "Complete usage guide for the application, in Spanish and English.",
+    "devManualText": "Technical guide for installation, configuration and deployment."
+  },
+  "footer": {
+    "project": "Project",
+    "resources": "Resources",
+    "credit": "Base project:",
+    "creditAuthor": "YellowBerry007/prompt-database by Berry @ Yellowgrape",
+    "fork": "Fork developed by",
+    "org": "PáginaVIVA",
+    "license": "MIT License",
+    "rights": "Original code: all rights reserved to its author."
+  }
+}

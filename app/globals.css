@@ -24,6 +24,20 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 262 83% 58%;
     --radius: 0.75rem;
+
+    /* Dynamic accent (default purple). The hue/saturation/lightness are
+       overridden at runtime with the user-chosen color (subtask 08). Kept
+       separate from the shadcn --accent token: Tailwind wraps that one in
+       hsl(var(--accent)), so it cannot hold a full hsl() value. */
+    --accent-hue: 262;
+    --accent-saturation: 83%;
+    --accent-lightness: 58%;
+    --accent-color: hsl(var(--accent-hue) var(--accent-saturation) var(--accent-lightness));
+    --accent-strong: hsl(var(--accent-hue) var(--accent-saturation) calc(var(--accent-lightness) - 8%));
+    --accent-soft-bg: hsl(var(--accent-hue) var(--accent-saturation) var(--accent-lightness) / 0.1);
+    --accent-border: hsl(var(--accent-hue) var(--accent-saturation) var(--accent-lightness) / 0.25);
+    --accent-glow: hsl(var(--accent-hue) var(--accent-saturation) var(--accent-lightness) / 0.15);
+    --accent-glow-strong: hsl(var(--accent-hue) var(--accent-saturation) var(--accent-lightness) / 0.25);
   }
 
   .dark {
@@ -46,6 +60,8 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+    /* The accent family inherits from :root: the accent color is the
+       user-chosen color and does not change between light/dark themes. */
   }
 }
 
@@ -54,33 +70,122 @@
     @apply border-border;
   }
   body {
-    @apply bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/30 text-foreground;
+    @apply text-foreground;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--background)) 0%,
+      hsl(var(--accent-hue) var(--accent-saturation) 98% / 0.3) 50%,
+      hsl(214 100% 97% / 0.3) 100%
+    );
+    background-attachment: fixed;
+  }
+  .dark body {
+    background: hsl(var(--background));
     background-attachment: fixed;
   }
 }
 
 @layer utilities {
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(262 83% 65%) 100%);
+    background: linear-gradient(
+      135deg,
+      hsl(var(--accent-hue) var(--accent-saturation) var(--accent-lightness)) 0%,
+      hsl(var(--accent-hue) var(--accent-saturation) calc(var(--accent-lightness) + 7%)) 100%
+    );
   }
-  
+
   .gradient-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+    background: linear-gradient(
+      135deg,
+      hsl(var(--card) / 0.92) 0%,
+      hsl(var(--card) / 0.75) 100%
+    );
     backdrop-filter: blur(10px);
   }
-  
+
   .gradient-sidebar {
-    background: linear-gradient(180deg, hsl(262 83% 58%) 0%, hsl(262 83% 50%) 100%);
+    background: linear-gradient(
+      180deg,
+      hsl(var(--accent-hue) var(--accent-saturation) var(--accent-lightness)) 0%,
+      hsl(var(--accent-hue) var(--accent-saturation) calc(var(--accent-lightness) - 8%)) 100%
+    );
   }
-  
+
   .shadow-glow {
-    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15);
+    box-shadow: 0 4px 20px var(--accent-glow);
   }
-  
+
   .shadow-glow-hover:hover {
-    box-shadow: 0 8px 30px rgba(139, 92, 246, 0.25);
+    box-shadow: 0 8px 30px var(--accent-glow-strong);
     transform: translateY(-2px);
   }
+
+  /* Dynamic accent utilities (follow the user-chosen accent color).
+     Defined after @tailwind utilities so they override the Tailwind
+     bg-accent/text-accent/border-accent/ring-accent variants that wrap
+     the shadcn --accent token (muted gray in dark mode). */
+  .text-accent {
+    color: var(--accent-color);
+  }
+  .text-accent-strong {
+    color: var(--accent-strong);
+  }
+  .bg-accent {
+    background-color: var(--accent-color);
+  }
+  .bg-accent-soft {
+    background-color: var(--accent-soft-bg);
+  }
+  .border-accent {
+    border-color: var(--accent-border);
+  }
+  .border-accent-strong {
+    border-color: var(--accent-color);
+  }
+  .ring-accent {
+    box-shadow: 0 0 0 1px var(--accent-color);
+  }
+  .hover\:bg-accent-soft:hover {
+    background-color: var(--accent-soft-bg);
+  }
+  .hover\:bg-accent-strong:hover {
+    background-color: var(--accent-strong);
+  }
+  .hover\:text-accent-strong:hover {
+    color: var(--accent-strong);
+  }
+  .hover\:text-accent:hover {
+    color: var(--accent-color);
+  }
+  .hover\:border-accent:hover {
+    border-color: var(--accent-border);
+  }
+  .focus\:border-accent:focus {
+    border-color: var(--accent-color);
+  }
+  .focus\:ring-accent:focus {
+    --tw-ring-color: var(--accent-color);
+  }
+  .group:hover .group-hover\:text-accent {
+    color: var(--accent-color);
+  }
+  /* Variants of the shadcn --accent token used by ui components (button,
+     select, dialog): point them at the dynamic accent so hover/focus/open
+     states follow the user-chosen color instead of the fixed token. */
+  .hover\:bg-accent:hover {
+    background-color: var(--accent-color);
+  }
+  .focus\:bg-accent:focus {
+    background-color: var(--accent-color);
+  }
+  .data-\[state\=open\]\:bg-accent[data-state="open"] {
+    background-color: var(--accent-color);
+  }
+  .hover\:text-accent-foreground:hover,
+  .focus\:text-accent-foreground:focus {
+    color: hsl(var(--accent-hue) var(--accent-saturation) 100%);
+  }
+  .data-\[state\=active\]\:text-accent-strong[data-state="active"] {
+    color: var(--accent-strong);
+  }
 }
-
-

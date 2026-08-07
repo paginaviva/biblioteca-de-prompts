@@ -1,0 +1,13 @@
+{
+  "experimentalServices": {
+    "web": {
+      "routePrefix": "/",
+      "framework": "nextjs"
+    }
+  },
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  }
+}

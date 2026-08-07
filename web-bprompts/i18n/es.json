@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "title": "Biblioteca de Prompts — Gestión y organización de instrucciones para IA",
+    "description": "Aplicación web para gestionar, organizar y buscar instrucciones (prompts) para inteligencia artificial. Código abierto en GitHub."
+  },
+  "nav": {
+    "features": "Características",
+    "screenshots": "Capturas",
+    "requirements": "Requisitos",
+    "docs": "Documentación",
+    "github": "GitHub",
+    "source": "Código fuente"
+  },
+  "hero": {
+    "badge": "Código abierto",
+    "title": "Biblioteca de Prompts",
+    "subtitle": "Gestiona, organiza y busca tus instrucciones para inteligencia artificial",
+    "description": "Aplicación web de código abierto para crear, editar y organizar mensajes (prompts) para diferentes modelos de IA, con categorías, etiquetas, búsqueda de texto completo y copiado con un clic.",
+    "ctaGithub": "Ver en GitHub",
+    "ctaDocs": "Manual de usuario",
+    "forkNote": "Tenedor (fork) de YellowBerry007/prompt-database, con crédito a su creador Berry @ Yellowgrape."
+  },
+  "features": {
+    "title": "Características",
+    "subtitle": "Todo lo necesario para mantener tu biblioteca de instrucciones bajo control",
+    "items": [
+      { "title": "Creación y edición", "text": "Crea, edita y elimina instrucciones con un formulario completo." },
+      { "title": "Categorías jerárquicas", "text": "Organiza con categorías de dos niveles y etiquetas." },
+      { "title": "Búsqueda de texto completo", "text": "Busca en título, descripción y cuerpo de cada instrucción." },
+      { "title": "Filtros combinados", "text": "Filtra por categoría, etiqueta, plataforma, estado y favoritos." },
+      { "title": "Copiado con un clic", "text": "Copia cualquier instrucción al portapapeles con un solo clic." },
+      { "title": "Seguimiento de uso", "text": "Contador de usos y fecha del último uso de cada instrucción." },
+      { "title": "Favoritos y duplicado", "text": "Marca como favoritas y duplica instrucciones fácilmente." },
+      { "title": "Exportación e importación", "text": "Exporta e importa tu biblioteca en formato JSON." },
+      { "title": "Multiusuario", "text": "Autenticación de usuarios y aislamiento de instrucciones por usuario." },
+      { "title": "Multilingüe", "text": "Interfaz en español e inglés, con selector de idioma." }
+    ]
+  },
+  "screenshots": {
+    "title": "Capturas de pantalla",
+    "subtitle": "Próximamente: pantallas de la aplicación",
+    "pending": "Las capturas de pantalla se publicarán próximamente."
+  },
+  "requirements": {
+    "title": "Requisitos",
+    "subtitle": "Para instalar y ejecutar la aplicación",
+    "items": [
+      "Node.js versión 20 o superior",
+      "npm, yarn o pnpm como gestor de paquetes",
+      "Base de datos PostgreSQL (por ejemplo, Neon)",
+      "Cuenta de Vercel para el despliegue"
+    ]
+  },
+  "docs": {
+    "title": "Documentación",
+    "subtitle": "Manuales disponibles en el repositorio",
+    "userManual": "Manual de usuario",
+    "devManual": "Manual del desarrollador e instalador",
+    "userManualText": "Guía de uso completa de la aplicación, en español e inglés.",
+    "devManualText": "Guía técnica de instalación, configuración y despliegue."
+  },
+  "footer": {
+    "project": "Proyecto",
+    "resources": "Recursos",
+    "credit": "Proyecto base:",
+    "creditAuthor": "YellowBerry007/prompt-database por Berry @ Yellowgrape",
+    "fork": "Tenedor desarrollado por",
+    "org": "PáginaVIVA",
+    "license": "Licencia MIT",
+    "rights": "Código original: derechos reservados a su autor."
+  }
+}

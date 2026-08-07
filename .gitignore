@@ -1,52 +1,77 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# ============================================================================
+# .gitignore — Prompt Database
+# ============================================================================
+# Next.js 14 + Prisma + TypeScript + OpenCode/OAC
+# ============================================================================
 
-# dependencies
+# ── SISTEMA / EDITOR ───────────────────────────────────────────────────────
+.DS_Store
+*.swp
+*.swo
+*~
+
+# ── DEPENDENCIAS ───────────────────────────────────────────────────────────
 /node_modules
 /.pnp
 .pnp.js
 
-# testing
+# ── TESTING ─────────────────────────────────────────────────────────────────
 /coverage
 
-# next.js
+# ── BUILD / COMPILACIÓN ─────────────────────────────────────────────────────
 /.next/
 /out/
-
-# production
 /build
 
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local env files
-.env*.local
-.env
-
-# vercel
-.vercel
-
-# typescript
+# TypeScript
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma
-/dev.db
-/dev.db-journal
-/prisma/migrations
+# ── ENTORNO / SECRETOS ──────────────────────────────────────────────────────
+# Archivo .env local (contiene tokens reales, NO versionar)
+.env
+# Variantes de entorno (desarrollo, producción, staging, etc.)
+.env.*
+# Variantes locales (sufijo .local)
+.env*.local
 
-# docker
-/data
+# Vercel (configuración local de proyecto vinculado)
+.vercel
+
+# ── BASE DE DATOS ───────────────────────────────────────────────────────────
+# Archivos de base de datos locales (SQLite)
 *.db
 *.db-journal
+/data
 
-# ssh keys
+# Migraciones de Prisma (regenerables)
+/prisma/migrations
+
+# ── SEGURIDAD ───────────────────────────────────────────────────────────────
+# Claves privadas, certificados, pares SSH
 .ssh/
 *.pem
 *_key
 *_key.pub
+cop-seg-selectiva/
+
+# ── LOGS / DEBUG ────────────────────────────────────────────────────────────
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── DATOS DE PRODUCCIÓN ─────────────────────────────────────────────────────
+# Dumps SQL, backups, exportaciones de BD (contienen datos reales)
+docs/
+
+# ── HERRAMIENTAS / CACHÉ ────────────────────────────────────────────────────
+# OpenCode / OAC: sesiones temporales de trabajo
+# Solo el conocimiento e inteligencia del proyecto (sistema de contextos) se versiona
+.opencode/*
+!.opencode/context/
+.tmp/
+session-*
+
+# ── DIRECTORIOS TEMPORALES ──────────────────────────────────────────────────
+temp/
+.env*

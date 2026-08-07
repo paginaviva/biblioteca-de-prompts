@@ -1,5 +1,8 @@
 import { render, screen } from "@testing-library/react"
+import { NextIntlClientProvider } from "next-intl"
 import { PromptList } from "@/components/prompt/PromptList"
+import { ViewModeProvider } from "@/contexts/ViewModeContext"
+import messages from "../../messages/en-GB.json"
 
 const mockPrompts = [
   {
@@ -13,6 +16,11 @@ const mockPrompts = [
     usageCount: 5,
     category: { name: "Coding" },
     tags: [{ tag: { name: "refactoring" } }],
+    platforms: [{ platform: { name: "CURSOR" } }],
+    categories: [{ category: { name: "Coding" } }],
+    clientProjects: [],
+    user: { name: "Test User", email: "test@example.com" },
+    body: "Test prompt body",
   },
   {
     id: "2",
@@ -25,25 +33,40 @@ const mockPrompts = [
     usageCount: 0,
     category: null,
     tags: [],
+    platforms: [],
+    categories: [],
+    clientProjects: [],
+    user: null,
+    body: "Test prompt body 2",
   },
 ]
 
+function renderWithViewModeProvider(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en-GB" messages={messages}>
+      <ViewModeProvider initialViewMode="cards">
+        {ui}
+      </ViewModeProvider>
+    </NextIntlClientProvider>
+  )
+}
+
 describe("PromptList", () => {
   it("renders prompts", () => {
-    render(<PromptList prompts={mockPrompts} />)
+    renderWithViewModeProvider(<PromptList prompts={mockPrompts} />)
 
     expect(screen.getByText("Test Prompt 1")).toBeInTheDocument()
     expect(screen.getByText("Test Prompt 2")).toBeInTheDocument()
   })
 
   it("renders empty state when no prompts", () => {
-    render(<PromptList prompts={[]} />)
+    renderWithViewModeProvider(<PromptList prompts={[]} />)
 
     expect(screen.getByText("No prompts found.")).toBeInTheDocument()
   })
 
   it("displays prompt metadata", () => {
-    render(<PromptList prompts={[mockPrompts[0]]} />)
+    renderWithViewModeProvider(<PromptList prompts={[mockPrompts[0]]} />)
 
     expect(screen.getByText("CURSOR")).toBeInTheDocument()
     expect(screen.getByText("PRODUCTION")).toBeInTheDocument()

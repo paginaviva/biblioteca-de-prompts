@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="meta.title">Biblioteca de Prompts</title>
+  <meta name="description" data-i18n="meta.description">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="contenedor cabecera-interior">
+      <a class="marca" href="#inicio">
+        <span class="marca-logotipo" id="logotipo">
+          <!-- Espacio reservado para el logotipo de PáginaVIVA -->
+          <span class="logotipo-sustituto">BP</span>
+        </span>
+        <span class="marca-nombre" data-i18n="hero.title">Biblioteca de Prompts</span>
+      </a>
+      <nav class="navegacion" aria-label="Navegación principal">
+        <a href="#caracteristicas" data-i18n="nav.features">Características</a>
+        <a href="#capturas" data-i18n="nav.screenshots">Capturas</a>
+        <a href="#requisitos" data-i18n="nav.requirements">Requisitos</a>
+        <a href="#documentacion" data-i18n="nav.docs">Documentación</a>
+        <a href="#creditos" data-i18n="nav.github">GitHub</a>
+      </nav>
+      <div class="selector-idioma">
+        <label class="selector-idioma-etiqueta" for="idioma">Idioma</label>
+        <select id="idioma" class="selector-idioma-select">
+          <option value="es">Español</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="inicio" class="hero">
+      <div class="contenedor">
+        <span class="hero-insignia" data-i18n="hero.badge">Código abierto</span>
+        <h1 class="hero-titulo" data-i18n="hero.title">Biblioteca de Prompts</h1>
+        <p class="hero-subtitulo" data-i18n="hero.subtitle">Gestiona, organiza y busca tus instrucciones para inteligencia artificial</p>
+        <p class="hero-descripcion" data-i18n="hero.description">Aplicación web de código abierto para crear, editar y organizar mensajes (prompts) para diferentes modelos de IA, con categorías, etiquetas, búsqueda de texto completo y copiado con un clic.</p>
+        <div class="hero-acciones">
+          <a class="boton boton-primario" id="enlace-github" href="https://github.com/paginaviva/biblioteca-de-prompts" target="_blank" rel="noopener" data-i18n="hero.ctaGithub">Ver en GitHub</a>
+          <a class="boton boton-secundario" href="https://github.com/paginaviva/biblioteca-de-prompts/blob/main/manuales/manual-de-usuario.md" target="_blank" rel="noopener" data-i18n="hero.ctaDocs">Manual de usuario</a>
+        </div>
+        <p class="hero-credito" data-i18n="hero.forkNote">Tenedor (fork) de YellowBerry007/prompt-database, con crédito a su creador Berry @ Yellowgrape.</p>
+      </div>
+    </section>
+
+    <section id="caracteristicas" class="seccion">
+      <div class="contenedor">
+        <h2 class="seccion-titulo" data-i18n="features.title">Características</h2>
+        <p class="seccion-subtitulo" data-i18n="features.subtitle">Todo lo necesario para mantener tu biblioteca de instrucciones bajo control</p>
+        <div class="rejilla-caracteristicas">
+          <article class="tarjeta">
+            <h3>Creación y edición</h3>
+            <p>Crea, edita y elimina instrucciones con un formulario completo.</p>
+          </article>
+          <article class="tarjeta">
+            <h3>Categorías jerárquicas</h3>
+            <p>Organiza con categorías de dos niveles y etiquetas.</p>
+          </article>
+          <article class="tarjeta">
+            <h3>Búsqueda de texto completo</h3>
+            <p>Busca en título, descripción y cuerpo de cada instrucción.</p>
+          </article>
+          <article class="tarjeta">
+            <h3>Filtros combinados</h3>
+            <p>Filtra por categoría, etiqueta, plataforma, estado y favoritos.</p>
+          </article>
+          <article class="tarjeta">
+            <h3>Copiado con un clic</h3>
+            <p>Copia cualquier instrucción al portapapeles con un solo clic.</p>
+          </article>
+          <article class="tarjeta">
+            <h3>Seguimiento de uso</h3>
+            <p>Contador de usos y fecha del último uso de cada instrucción.</p>
+          </article>
+          <article class="tarjeta">
+            <h3>Favoritos y duplicado</h3>
+            <p>Marca como favoritas y duplica instrucciones fácilmente.</p>
+          </article>
+          <article class="tarjeta">
+            <h3>Exportación e importación</h3>
+            <p>Exporta e importa tu biblioteca en formato JSON.</p>
+          </article>
+          <article class="tarjeta">
+            <h3>Multiusuario</h3>
+            <p>Autenticación de usuarios y aislamiento de instrucciones por usuario.</p>
+          </article>
+          <article class="tarjeta">
+            <h3>Multilingüe</h3>
+            <p>Interfaz en español e inglés, con selector de idioma.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="capturas" class="seccion seccion-alternativa">
+      <div class="contenedor">
+        <h2 class="seccion-titulo" data-i18n="screenshots.title">Capturas de pantalla</h2>
+        <p class="seccion-subtitulo" data-i18n="screenshots.subtitle">Próximamente: pantallas de la aplicación</p>
+        <div class="galeria" id="galeria-capturas">
+          <p class="galeria-pendiente" data-i18n="screenshots.pending">Las capturas de pantalla se publicarán próximamente.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="requisitos" class="seccion">
+      <div class="contenedor">
+        <h2 class="seccion-titulo" data-i18n="requirements.title">Requisitos</h2>
+        <p class="seccion-subtitulo" data-i18n="requirements.subtitle">Para instalar y ejecutar la aplicación</p>
+        <ul class="lista-requisitos">
+          <li>Node.js versión 20 o superior</li>
+          <li>npm, yarn o pnpm como gestor de paquetes</li>
+          <li>Base de datos PostgreSQL (por ejemplo, Neon)</li>
+          <li>Cuenta de Vercel para el despliegue</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="documentacion" class="seccion seccion-alternativa">
+      <div class="contenedor">
+        <h2 class="seccion-titulo" data-i18n="docs.title">Documentación</h2>
+        <p class="seccion-subtitulo" data-i18n="docs.subtitle">Manuales disponibles en el repositorio</p>
+        <div class="rejilla-documentacion">
+          <article class="tarjeta">
+            <h3 data-i18n="docs.userManual">Manual de usuario</h3>
+            <p data-i18n="docs.userManualText">Guía de uso completa de la aplicación, en español e inglés.</p>
+            <a class="enlace" href="https://github.com/paginaviva/biblioteca-de-prompts/blob/main/manuales/manual-de-usuario.md" target="_blank" rel="noopener">manual-de-usuario.md</a>
+          </article>
+          <article class="tarjeta">
+            <h3 data-i18n="docs.devManual">Manual del desarrollador e instalador</h3>
+            <p data-i18n="docs.devManualText">Guía técnica de instalación, configuración y despliegue.</p>
+            <a class="enlace" href="https://github.com/paginaviva/biblioteca-de-prompts/blob/main/manuales/manual-del-desarrollador.md" target="_blank" rel="noopener">manual-del-desarrollador.md</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="creditos" class="seccion">
+      <div class="contenedor">
+        <h2 class="seccion-titulo" data-i18n="footer.credit">Proyecto base</h2>
+        <p class="credito-texto">
+          <span data-i18n="footer.creditAuthor">YellowBerry007/prompt-database por Berry @ Yellowgrape</span>
+          <span> · </span>
+          <a href="https://github.com/YellowBerry007/prompt-database" target="_blank" rel="noopener">github.com/YellowBerry007/prompt-database</a>
+        </p>
+        <p class="credito-texto">
+          <span data-i18n="footer.fork">Tenedor desarrollado por</span>
+          <span> </span>
+          <a href="https://github.com/paginaviva" target="_blank" rel="noopener">PáginaVIVA</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie-interior">
+      <span class="pie-texto">© 2026 PáginaVIVA</span>
+      <span class="pie-texto" data-i18n="footer.license">Licencia MIT</span>
+      <span class="pie-texto" data-i18n="footer.rights">Código original: derechos reservados a su autor.</span>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

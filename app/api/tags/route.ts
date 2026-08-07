@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { auth } from "@/lib/auth"
 import { z } from "zod"
+import { getTranslations } from "next-intl/server"
+import { getLocaleFromRequest } from "@/lib/locale"
 
 const createTagSchema = z.object({
   name: z.string().min(1),
@@ -8,12 +11,26 @@ const createTagSchema = z.object({
 })
 
 export async function GET(request: NextRequest) {
+  const locale = getLocaleFromRequest(request)
+  const t = await getTranslations({ locale, namespace: "Api" })
+
   try {
+    const session = await auth()
+
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: t("unauthorized") },
+        { status: 401 }
+      )
+    }
+
     const tags = await prisma.tag.findMany({
       include: {
         _count: {
           select: {
-            prompts: true,
+            prompts: {
+              where: { prompt: { userId: session.user.id } },
+            },
           },
         },
       },
@@ -26,14 +43,26 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching tags:", error)
     return NextResponse.json(
-      { error: "Failed to fetch tags" },
+      { error: t("failedToFetchTags") },
       { status: 500 }
     )
   }
 }
 
 export async function POST(request: NextRequest) {
+  const locale = getLocaleFromRequest(request)
+  const t = await getTranslations({ locale, namespace: "Api" })
+
   try {
+    const session = await auth()
+    
+    if (!session?.user || session.user.role !== "admin") {
+      return NextResponse.json(
+        { error: t("unauthorized") },
+        { status: 401 }
+      )
+    }
+
     const body = await request.json()
     const data = createTagSchema.parse(body)
 
@@ -41,17 +70,17 @@ export async function POST(request: NextRequest) {
       data,
     })
 
-    return NextResponse.json(tag, { status: 201 })
+    return NextResponse.json({ data: tag }, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Invalid input", details: error.errors },
+        { error: t("invalidInput"), details: error.errors },
         { status: 400 }
       )
     }
     console.error("Error creating tag:", error)
     return NextResponse.json(
-      { error: "Failed to create tag" },
+      { error: t("failedToCreateTag") },
       { status: 500 }
     )
   }
