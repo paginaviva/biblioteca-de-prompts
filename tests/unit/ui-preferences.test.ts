@@ -7,6 +7,7 @@
 // authenticated layout. No mocks needed.
 import {
   parseUIPreferences,
+  normalizeFilterOrder,
   UI_PREFERENCES_DEFAULTS,
   DEFAULT_FILTER_ORDER,
   DEFAULT_COLUMN_KEYS,
@@ -83,16 +84,28 @@ describe("parseUIPreferences", () => {
     expect(result).toEqual({ ...UI_PREFERENCES_DEFAULTS, theme: "dark" })
   })
 
-  it("keeps an incomplete filterOrder as-is (completion lives in the dashboard, not here)", () => {
-    // Arrange & Act — filterOrder is z.array(...) WITHOUT .min, and both
-    // values are valid enum members, so ["status", "tags"] passes and is
-    // returned untouched. Filling missing keys is the responsibility of
-    // ProfileDashboardTab's normalizeFilterOrder, NOT parseUIPreferences.
+  it("completes an incomplete filterOrder preserving the user choice", () => {
+    // Arrange & Act — legacy 7-item order without "type" migrates by
+    // preserving the custom sequence and appending the missing key
     const result = parseUIPreferences({ filterOrder: ["status", "tags"] })
 
     // Assert
-    expect(result.filterOrder).toEqual(["status", "tags"])
+    expect(result.filterOrder.slice(0, 2)).toEqual(["status", "tags"])
+    expect(result.filterOrder).toHaveLength(DEFAULT_FILTER_ORDER.length)
+    expect(result.filterOrder).toEqual(expect.arrayContaining([...DEFAULT_FILTER_ORDER]))
     expect(result.columns).toEqual(UI_PREFERENCES_DEFAULTS.columns)
+  })
+
+  it("normalizeFilterOrder keeps order, drops unknown keys and appends missing keys", () => {
+    // Arrange & Act
+    const result = normalizeFilterOrder(["useCase", "platform", "unknown-key", "platform"])
+
+    // Assert — custom sequence first, duplicates and unknown keys dropped,
+    // missing default keys appended in default sequence
+    expect(result.slice(0, 2)).toEqual(["useCase", "platform"])
+    expect(result).not.toContain("unknown-key")
+    expect(result).toHaveLength(DEFAULT_FILTER_ORDER.length)
+    expect(result).toEqual(expect.arrayContaining([...DEFAULT_FILTER_ORDER]))
   })
 
   it("keeps a columns config with a visible list of exactly 1", () => {

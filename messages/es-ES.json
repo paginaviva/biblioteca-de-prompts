@@ -351,6 +351,7 @@
     "tags": "Etiquetas",
     "platform": "Plataforma",
     "status": "Estado",
+    "type": "Tipo",
     "language": "Idioma",
     "clientProject": "Cliente / Proyecto",
     "useCase": "Caso de uso"

@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { X } from "lucide-react"
-import { DEFAULT_FILTER_ORDER } from "@/lib/ui-preferences"
+import { DEFAULT_FILTER_ORDER, normalizeFilterOrder } from "@/lib/ui-preferences"
 
 interface PromptFiltersProps {
   categories: Array<{ id: string; name: string; slug: string }>
@@ -203,13 +203,10 @@ export function PromptFilters({
     [selectedArrays],
   )
 
-  // Only trust filterOrder when it lists every known box. Empty or partial
-  // orders (legacy data, provider-less renders) fall back to the default so
-  // the full panel is always shown; unknown keys are skipped at render time.
-  const order: readonly string[] =
-    DEFAULT_FILTER_ORDER.every((key) => filterOrder.includes(key))
-      ? filterOrder
-      : DEFAULT_FILTER_ORDER
+  // Preserves the user choice and appends missing boxes, so legacy partial
+  // orders migrate without discarding the custom sequence. Unknown keys
+  // are skipped at render time.
+  const order: readonly string[] = useMemo(() => normalizeFilterOrder(filterOrder), [filterOrder])
 
   // Status/language options come from the catalog (server loaded) when
   // available; the fixed arrays are the fallback. Filter values must match

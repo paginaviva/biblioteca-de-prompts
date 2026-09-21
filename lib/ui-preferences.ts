@@ -97,6 +97,27 @@ export interface UIPreferences {
   }
 }
 
+// Completes a stored filter order without losing the user choice.
+// Keeps known keys in the given sequence, drops unknown keys and appends
+// missing default keys at the end. Migrates legacy 7-item orders to 8 items.
+export function normalizeFilterOrder(order: readonly string[]): string[] {
+  const known = new Set<string>([...DEFAULT_FILTER_ORDER])
+  const seen = new Set<string>()
+  const result: string[] = []
+  for (const key of order) {
+    if (known.has(key) && !seen.has(key)) {
+      seen.add(key)
+      result.push(key)
+    }
+  }
+  for (const key of DEFAULT_FILTER_ORDER) {
+    if (!seen.has(key)) {
+      result.push(key)
+    }
+  }
+  return result
+}
+
 // Parse stored JSON and apply defaults, returning a fully-typed object.
 export function parseUIPreferences(value: unknown): UIPreferences {
   const parsed = uiPreferencesSchema.parse(value ?? {})
@@ -106,7 +127,7 @@ export function parseUIPreferences(value: unknown): UIPreferences {
     theme: parsed.theme ?? "light",
     // "" is the per-field catch fallback for legacy invalid values
     accentColor: parsed.accentColor || "#7c3aed",
-    filterOrder: parsed.filterOrder ?? [...DEFAULT_FILTER_ORDER],
+    filterOrder: normalizeFilterOrder(parsed.filterOrder ?? [...DEFAULT_FILTER_ORDER]),
     columns: parsed.columns ?? {
       visible: [...DEFAULT_COLUMN_KEYS],
       order: [...ALL_COLUMN_KEYS],

@@ -351,6 +351,7 @@
     "tags": "Tags",
     "platform": "Platform",
     "status": "Status",
+    "type": "Type",
     "language": "Language",
     "clientProject": "Client / Project",
     "useCase": "Use Case"
