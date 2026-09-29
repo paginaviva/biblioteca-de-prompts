@@ -150,16 +150,21 @@ function CategoriesPage() {
       const payload: {
         name: string
         slug: string
-        parentId?: string
+        parentId?: string | null
         sortOrder: number
       } = {
         name: formData.name,
         slug: formData.slug,
         sortOrder: parseInt(String(formData.sortOrder)) || 0,
       }
-      
-      // Only include parentId if it's not null
-      if (formData.parentId) {
+
+      // On create the endpoint rejects an explicit null parentId, so it is only
+      // sent when a parent is picked. On update it must always be sent, even as
+      // null: otherwise the stored parent is left untouched and the category
+      // can never be promoted back to the top level.
+      if (editingCategory) {
+        payload.parentId = formData.parentId
+      } else if (formData.parentId) {
         payload.parentId = formData.parentId
       }
 
