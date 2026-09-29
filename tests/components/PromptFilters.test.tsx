@@ -15,34 +15,29 @@ function renderWithI18n(ui: React.ReactElement) {
   )
 }
 
-// Mock next/navigation
 const mockPush = jest.fn()
-const mockGetAll = jest.fn<string[], []>(() => [])
-const mockToString = jest.fn<string, []>(() => "")
-const mockDelete = jest.fn()
-const mockAppend = jest.fn()
-const mockSet = jest.fn()
+
+// The search params hook is a second source of truth for the filter state. Tests
+// set it independently from the `initialFilters` prop on purpose, so they can
+// reproduce the case where the hook lags behind the server-rendered props.
+let currentSearchParams = new URLSearchParams()
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({
     push: mockPush,
   }),
-  useSearchParams: () => ({
-    getAll: mockGetAll,
-    toString: mockToString,
-  }),
+  useSearchParams: () => currentSearchParams,
   usePathname: () => "/prompts",
 }))
 
-// Mock URLSearchParams globally
-const originalURLSearchParams = global.URLSearchParams
-global.URLSearchParams = jest.fn(() => ({
-  getAll: mockGetAll,
-  toString: mockToString,
-  delete: mockDelete,
-  append: mockAppend,
-  set: mockSet,
-})) as any
+// Reads back the query string the component actually navigated to. A real
+// URLSearchParams is used on purpose: asserting on the produced URL is what
+// makes these tests capable of detecting a dropped or resurrected filter.
+function pushedParams(): URLSearchParams {
+  const lastCall = mockPush.mock.calls[mockPush.mock.calls.length - 1]
+  const url = (lastCall?.[0] as string) ?? ""
+  return new URLSearchParams(url.split("?")[1] ?? "")
+}
 
 describe("PromptFilters", () => {
   const mockCategories = [
@@ -68,26 +63,26 @@ describe("PromptFilters", () => {
     { id: "use-1", name: "Email", slug: "email" },
   ]
 
-  beforeEach(() => {
-    jest.clearAllMocks()
-    mockPush.mockClear()
-    mockGetAll.mockClear()
-    mockDelete.mockClear()
-    mockAppend.mockClear()
-    mockSet.mockClear()
-  })
-
-  it("should render with empty filters", () => {
-    renderWithI18n(
+  function renderFilters(initialFilters: Record<string, string | string[]> = {}) {
+    return renderWithI18n(
       <PromptFilters
         categories={mockCategories}
         tags={mockTags}
         platforms={mockPlatforms}
         clients={mockClients}
         useCases={mockUseCases}
-        initialFilters={{}}
+        initialFilters={initialFilters}
       />
     )
+  }
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+    currentSearchParams = new URLSearchParams()
+  })
+
+  it("should render with empty filters", () => {
+    renderFilters()
 
     expect(screen.getByText("Filters")).toBeInTheDocument()
     expect(screen.getByText("Category")).toBeInTheDocument()
@@ -96,169 +91,88 @@ describe("PromptFilters", () => {
   })
 
   it("should toggle platform and add to URL params", () => {
-    mockGetAll.mockReturnValue([]) // No existing platformIds
-    mockToString.mockReturnValue("")
+    renderFilters()
 
-    renderWithI18n(
-      <PromptFilters
-        categories={mockCategories}
-        tags={mockTags}
-        platforms={mockPlatforms}
-        clients={mockClients}
-        useCases={mockUseCases}
-        initialFilters={{}}
-      />
-    )
+    fireEvent.click(screen.getByLabelText("CHATGPT"))
 
-    // Find and click the first platform checkbox
-    const platformCheckbox = screen.getByLabelText("CHATGPT")
-    fireEvent.click(platformCheckbox)
-
-    // Verify URL params were updated
-    expect(mockAppend).toHaveBeenCalledWith("platformIds", "plat-1")
-    expect(mockPush).toHaveBeenCalled()
+    expect(pushedParams().getAll("platformIds")).toEqual(["plat-1"])
   })
 
   it("should toggle platform and remove from URL params", () => {
-    mockGetAll.mockReturnValue(["plat-1"]) // Existing platformIds
-    mockToString.mockReturnValue("")
+    currentSearchParams = new URLSearchParams("platformIds=plat-1")
+    renderFilters({ platformIds: "plat-1" })
 
-    renderWithI18n(
-      <PromptFilters
-        categories={mockCategories}
-        tags={mockTags}
-        platforms={mockPlatforms}
-        clients={mockClients}
-        useCases={mockUseCases}
-        initialFilters={{}}
-      />
-    )
+    fireEvent.click(screen.getByLabelText("CHATGPT"))
 
-    // Find and click the first platform checkbox (to remove)
-    const platformCheckbox = screen.getByLabelText("CHATGPT")
-    fireEvent.click(platformCheckbox)
-
-    // Verify URL params were updated (removed)
-    expect(mockDelete).toHaveBeenCalledWith("platformIds")
-    expect(mockPush).toHaveBeenCalled()
+    expect(pushedParams().getAll("platformIds")).toEqual([])
   })
 
   it("should toggle category and add to URL params", () => {
-    mockGetAll.mockReturnValue([]) // No existing categoryIds
-    mockToString.mockReturnValue("")
+    renderFilters()
 
-    renderWithI18n(
-      <PromptFilters
-        categories={mockCategories}
-        tags={mockTags}
-        platforms={mockPlatforms}
-        clients={mockClients}
-        useCases={mockUseCases}
-        initialFilters={{}}
-      />
-    )
+    fireEvent.click(screen.getByLabelText("Writing"))
 
-    // Find and click the first category checkbox
-    const categoryCheckbox = screen.getByLabelText("Writing")
-    fireEvent.click(categoryCheckbox)
-
-    // Verify URL params were updated
-    expect(mockAppend).toHaveBeenCalledWith("categoryIds", "cat-1")
-    expect(mockPush).toHaveBeenCalled()
+    expect(pushedParams().getAll("categoryIds")).toEqual(["cat-1"])
   })
 
   it("should toggle category and remove from URL params", () => {
-    mockGetAll.mockReturnValue(["cat-1"]) // Existing categoryIds
-    mockToString.mockReturnValue("")
+    currentSearchParams = new URLSearchParams("categoryIds=cat-1")
+    renderFilters({ categoryIds: "cat-1" })
 
-    renderWithI18n(
-      <PromptFilters
-        categories={mockCategories}
-        tags={mockTags}
-        platforms={mockPlatforms}
-        clients={mockClients}
-        useCases={mockUseCases}
-        initialFilters={{}}
-      />
-    )
+    fireEvent.click(screen.getByLabelText("Writing"))
 
-    // Find and click the first category checkbox (to remove)
-    const categoryCheckbox = screen.getByLabelText("Writing")
-    fireEvent.click(categoryCheckbox)
-
-    // Verify URL params were updated (removed)
-    expect(mockDelete).toHaveBeenCalledWith("categoryIds")
-    expect(mockPush).toHaveBeenCalled()
+    expect(pushedParams().getAll("categoryIds")).toEqual([])
   })
 
   it("should toggle tag and add to URL params", () => {
-    mockGetAll.mockReturnValue([]) // No existing tagIds
-    mockToString.mockReturnValue("")
+    renderFilters()
 
-    renderWithI18n(
-      <PromptFilters
-        categories={mockCategories}
-        tags={mockTags}
-        platforms={mockPlatforms}
-        clients={mockClients}
-        useCases={mockUseCases}
-        initialFilters={{}}
-      />
-    )
+    fireEvent.click(screen.getByLabelText("Important"))
 
-    // Find and click the first tag checkbox
-    const tagCheckbox = screen.getByLabelText("Important")
-    fireEvent.click(tagCheckbox)
-
-    // Verify URL params were updated
-    expect(mockAppend).toHaveBeenCalledWith("tagIds", "tag-1")
-    expect(mockPush).toHaveBeenCalled()
+    expect(pushedParams().getAll("tagIds")).toEqual(["tag-1"])
   })
 
-  it("should use params.append() for multiple selections (not params.set())", () => {
-    // Simulate existing selections
-    mockGetAll.mockReturnValue(["plat-1"])
-    mockToString.mockReturnValue("platformIds=plat-1")
+  it("should keep the filters that are already active when adding a new one", () => {
+    currentSearchParams = new URLSearchParams("platformIds=plat-1")
+    renderFilters({ platformIds: "plat-1" })
 
-    renderWithI18n(
-      <PromptFilters
-        categories={mockCategories}
-        tags={mockTags}
-        platforms={mockPlatforms}
-        clients={mockClients}
-        useCases={mockUseCases}
-        initialFilters={{}}
-      />
-    )
+    fireEvent.click(screen.getByLabelText("CURSOR"))
 
-    // Click second platform to add
-    const platformCheckbox = screen.getByLabelText("CURSOR")
-    fireEvent.click(platformCheckbox)
-
-    // Verify append was used (not set) for multi-select
-    expect(mockAppend).toHaveBeenCalledWith("platformIds", "plat-2")
-    expect(mockSet).not.toHaveBeenCalledWith("platformIds", expect.anything())
+    const params = pushedParams()
+    expect(params.getAll("platformIds")).toEqual(["plat-1", "plat-2"])
   })
 
   it("should clear all filters when clear filters is clicked", () => {
-    mockToString.mockReturnValue("platformIds=plat-1&categoryIds=cat-1&tagIds=tag-1")
+    currentSearchParams = new URLSearchParams("platformIds=plat-1&categoryIds=cat-1&tagIds=tag-1")
+    renderFilters({ platformIds: "plat-1", categoryIds: "cat-1", tagIds: "tag-1" })
 
-    renderWithI18n(
-      <PromptFilters
-        categories={mockCategories}
-        tags={mockTags}
-        platforms={mockPlatforms}
-        clients={mockClients}
-        useCases={mockUseCases}
-        initialFilters={{ platformIds: "plat-1", categoryIds: "cat-1", tagIds: "tag-1" }}
-      />
-    )
+    fireEvent.click(screen.getByRole("button", { name: /clear filters/i }))
 
-    // Find and click clear filters button
-    const clearButton = screen.getByRole("button", { name: /clear filters/i })
-    fireEvent.click(clearButton)
-
-    // Verify navigation to base /prompts URL (clears all params)
     expect(mockPush).toHaveBeenCalledWith("/prompts")
+  })
+
+  it("preserves the search term and the favourites filter when toggling", () => {
+    currentSearchParams = new URLSearchParams("search=report&isFavorite=true")
+    renderFilters({ search: "report", isFavorite: "true" })
+
+    fireEvent.click(screen.getByLabelText("Important"))
+
+    const params = pushedParams()
+    expect(params.get("search")).toBe("report")
+    expect(params.get("isFavorite")).toBe("true")
+    expect(params.getAll("tagIds")).toEqual(["tag-1"])
+  })
+
+  it("rebuilds the query string from the rendered state, not from the search params hook", () => {
+    // The hook is stale: it still reports a filter that is no longer rendered as
+    // checked. The next navigation must not resurrect it.
+    currentSearchParams = new URLSearchParams("platformIds=plat-1&tagIds=tag-1")
+    renderFilters({ tagIds: "tag-1" })
+
+    fireEvent.click(screen.getByLabelText("Reviewed"))
+
+    const params = pushedParams()
+    expect(params.getAll("tagIds")).toEqual(["tag-1", "tag-2"])
+    expect(params.getAll("platformIds")).toEqual([])
   })
 })

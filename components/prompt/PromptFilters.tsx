@@ -1,7 +1,7 @@
 "use client"
 
 import { Fragment, useCallback, useMemo, type ReactNode } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -103,23 +103,37 @@ export function PromptFilters({
   filterOrder = DEFAULT_FILTER_ORDER,
 }: PromptFiltersProps & { filterOrder?: readonly string[] }) {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const t = useTranslations("PromptFilters")
   const tMetadata = useTranslations("MetadataSegment")
 
-  const toggleFilter = useCallback((key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    const currentValues = params.getAll(key)
-    if (currentValues.includes(value)) {
-      params.delete(key)
-      currentValues
-        .filter((v) => v !== value)
-        .forEach((v) => params.append(key, v))
-    } else {
-      params.append(key, value)
-    }
-    router.push(`/prompts?${params.toString()}`)
-  }, [searchParams, router])
+  // Rebuilds the query string from initialFilters, the same source that decides
+  // which checkboxes render as checked. Reading searchParams here instead would
+  // use a second source of truth: when that hook lags behind the server-rendered
+  // props (typically right after clearing), a filter the user just removed comes
+  // back and couples with the next one they pick.
+  const toggleFilter = useCallback(
+    (key: string, value: string) => {
+      const params = new URLSearchParams()
+      for (const [filterKey, filterValue] of Object.entries(initialFilters)) {
+        if (filterValue === undefined || filterValue === null) continue
+        const values = Array.isArray(filterValue) ? filterValue : [filterValue]
+        for (const entry of values) {
+          params.append(filterKey, entry)
+        }
+      }
+      const currentValues = params.getAll(key)
+      if (currentValues.includes(value)) {
+        params.delete(key)
+        currentValues
+          .filter((v) => v !== value)
+          .forEach((v) => params.append(key, v))
+      } else {
+        params.append(key, value)
+      }
+      router.push(`/prompts?${params.toString()}`)
+    },
+    [initialFilters, router]
+  )
 
   const clearFilters = () => {
     router.push("/prompts")
